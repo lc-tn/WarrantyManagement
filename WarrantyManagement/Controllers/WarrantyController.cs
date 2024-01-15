@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WarrantyManagement.Entities;
+using WarrantyManagement.Model;
 using WarrantyManagement.Repositories;
 
 namespace WarrantyManagement.Controllers
@@ -21,16 +23,27 @@ namespace WarrantyManagement.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAllWarranty()
+        [Authorize(Roles = RoleModel.CUSTOMER)]
+        public List<Warranty> GetAllWarranty()
         {
             List<Warranty> warranties = new List<Warranty>();
             warranties = _warrantyRepository.GetAll();
-            return Ok(warranties);
+            return warranties;
         }
 
         [HttpPost]
-        public IActionResult CreateCustomer([FromBody] Warranty warranty)
+        [Authorize(Roles = RoleModel.CUSTOMER)]
+        public IActionResult CreateWarranty([FromBody] WarrantyModel warrantyModel)
         {
+            Warranty warranty = new Warranty
+            {
+                Id = warrantyModel.Id,
+                Description = warrantyModel.Description,
+                CreateDate = warrantyModel.CreateDate,
+                Status = warrantyModel.Status,
+                DeviceId = warrantyModel.DeviceId,
+                CustomerId = warrantyModel.CustomerId
+            };
             if (warranty == null)
                 return BadRequest(ModelState);
 
@@ -66,7 +79,6 @@ namespace WarrantyManagement.Controllers
                 ModelState.AddModelError("", "Something went wrong while saving");
                 return StatusCode(500, ModelState);
             }
-
             return Ok("Successfully editing!");
         }
     }

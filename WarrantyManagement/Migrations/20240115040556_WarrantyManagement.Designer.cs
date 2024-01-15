@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WarrantyManagement.Repositories;
 
@@ -11,9 +12,11 @@ using WarrantyManagement.Repositories;
 namespace WarrantyManagement.Migrations
 {
     [DbContext(typeof(WarrantyManagementDbContext))]
-    partial class WarrantyManagementDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240115040556_WarrantyManagement")]
+    partial class WarrantyManagement
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

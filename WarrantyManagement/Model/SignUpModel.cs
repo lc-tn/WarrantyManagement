@@ -1,19 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WarrantyManagement.Entities
+namespace WarrantyManagement.Model
 {
-    public class Customer
+    public class SignUpModel
     {
         [Required]
-        public string Id { get; set; }
+        public string UserName { get; set; }
+        [Required]
         public string Password { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
         public string Address { get; set; }
-        public string Role { get; set; }
-
-        //one-to-many relationship with Warranty
-        public ICollection<Warranty> Warranties { get; set; } = new List<Warranty>();
     }
 }

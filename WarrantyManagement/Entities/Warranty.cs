@@ -13,10 +13,10 @@ namespace WarrantyManagement.Entities
 
         //one-to-many relationship with device
         public int DeviceId { get; set; }
-        public Device Device { get; set; } = null!;
+        public Device Device { get; set; }
 
         //many-to-one relationship with Customer
         public string CustomerId { get; set; }
-        public Customer Customer { get; set; } = null!;
+        public User Customer { get; set; }
     }
 }
