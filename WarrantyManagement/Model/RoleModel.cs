@@ -1,8 +1,8 @@
 ﻿namespace WarrantyManagement.Model
 {
-    public static class RoleModel
+    public class RoleModel
     {
-        public const string ADMIN = "Admin";
-        public const string CUSTOMER = "Customer";
+        public int Id { get; set; }
+        public string Name { get; set; }
     }
 }

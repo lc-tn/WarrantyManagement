@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using System.Text.Json.Serialization;
 using WarrantyManagement.Entities;
 using WarrantyManagement.Repositories;
 
@@ -51,9 +52,11 @@ namespace WarrantyManagement
             });
 
             builder.Services.AddScoped<UserRepository>();
-            //builder.Services.AddScoped<CategoryRepository>();
-            //builder.Services.AddScoped<DeviceRepository>();
+            builder.Services.AddScoped<PermissionRepository>();
+            builder.Services.AddScoped<DeviceRepository>();
             builder.Services.AddScoped<WarrantyRepository>();
+            builder.Services.AddScoped<RoleRepository>();
+            builder.Services.AddScoped<RolePermissionRepository>();
 
             builder.Services.AddDbContext<WarrantyManagementDbContext>(options =>
             {
@@ -62,6 +65,17 @@ namespace WarrantyManagement
 
             builder.Services.AddCors(options => options.AddDefaultPolicy(
                 policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAngularOrigins",
+                builder =>
+                {
+                    builder.WithOrigins("http://localhost:4200")
+                                        .AllowAnyHeader()
+                                        .AllowAnyMethod();
+                });
+            });
 
             builder.Services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<WarrantyManagementDbContext>().AddDefaultTokenProviders();
@@ -86,11 +100,28 @@ namespace WarrantyManagement
                 };
             });
 
-            builder.Services.AddAuthorization(auth =>
+            //builder.Services.AddControllers().AddJsonOptions(options =>
+            //{
+            //    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+            //});
+
+
+            builder.Services.AddAuthorization(options =>
             {
-                auth.AddPolicy("Bearer", new AuthorizationPolicyBuilder()
+                options.AddPolicy("Bearer", new AuthorizationPolicyBuilder()
                     .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme‌​)
                     .RequireAuthenticatedUser().Build());
+
+                var serviceProvider = builder.Services.BuildServiceProvider();
+                var permissionRepository = serviceProvider.GetRequiredService<PermissionRepository>();
+
+                var permissions = permissionRepository.GetAll().Result;
+
+                foreach (var permission in permissions)
+                {
+                    options.AddPolicy(permission.Name, policy => policy.RequireClaim("Permission", permission.Name));
+                }
+                options.AddPolicy("VIEW_ROLE", policy => policy.RequireClaim("Permission", "VIEW_ROLE"));
             });
 
             var app = builder.Build();
@@ -104,9 +135,12 @@ namespace WarrantyManagement
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();
+
+            app.UseCors();
 
             app.Run();
         }

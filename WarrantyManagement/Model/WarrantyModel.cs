@@ -6,13 +6,14 @@ namespace WarrantyManagement.Model
     {
         public int Id { get; set; }
         public string Description { get; set; }
-        public DateTime CreateDate { get; set; } = DateTime.Now;
+        public DateTime CreateDate { get; set; }
+        //public DateTime ApointmentDate { get; set; }
 
         public string Status { get; set; }
 
-        public int DeviceId { get; set; }
+        public string DeviceName { get; set; }
 
-        public string CustomerId { get; set; }
+        public string CustomerName { get; set; }
 
     }
 }

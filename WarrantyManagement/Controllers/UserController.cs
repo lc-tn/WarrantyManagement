@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WarrantyManagement.Authorization;
 using WarrantyManagement.Entities;
 using WarrantyManagement.Model;
 using WarrantyManagement.Repositories;
+using Role = WarrantyManagement.Entities.Role;
 
 namespace WarrantyManagement.Controllers
 {
@@ -11,15 +13,18 @@ namespace WarrantyManagement.Controllers
     public class UserController : ControllerBase
     {
         private readonly UserRepository _userRepository;
+        private readonly RoleRepository _roleRepository;
 
-        public UserController(UserRepository userRepository)
+        public UserController(UserRepository userRepository,
+             RoleRepository roleRepository)
         {
             _userRepository = userRepository;
+            _roleRepository = roleRepository;
         }
 
-        private bool CheckExistence(string customerId)
+        private bool CheckExistence(string userId)
         {
-            return _userRepository.CheckExistence(customerId);
+            return _userRepository.CheckExistence(userId);
         }
 
         [HttpPost("signup")]
@@ -34,20 +39,21 @@ namespace WarrantyManagement.Controllers
         }
 
         [HttpPost("signin")]
-        public async Task<IActionResult> SignIn(SignInModel signInModel)
+        public async Task<string> SignIn(SignInModel signInModel)
         {
-            var result = await _userRepository.SignInAsync(signInModel);
+            string result = await _userRepository.SignInAsync(signInModel);
             if (string.IsNullOrEmpty(result))
             {
-                return Unauthorized();
+                return null;
             }
-            return Ok(result);
+            return result;
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetCustomerById(string id)
+        [HasPermission("VIEW_USER")]
+        public async Task<IActionResult> GetCustomerById(string id)
         {
-            User customer = _userRepository.GetCustomerById(id);
+            User customer = await _userRepository.GetCustomerById(id);
             if (customer != null)
             {
                 return Ok(customer);
@@ -59,27 +65,41 @@ namespace WarrantyManagement.Controllers
         }
 
         [HttpGet]
-        public List<User> GetAllCustomers() 
+        [HasPermission("VIEW_USER")]
+        public async Task<List<UserModel>> GetAll() 
         {
-            List<User> customers = new List<User>();
-            customers = _userRepository.GetAll();
-            return customers;
+            List<User> users = new List<User>();
+            List<UserModel> userModels = new List<UserModel>();
+            users = await _userRepository.GetAll();
+            foreach(User user in users)
+            {
+                UserModel userModel = new UserModel();
+                Role role = await _roleRepository.GetById(user.RoleId);
+                userModel.Id = user.Id;
+                userModel.Password = user.Password;
+                userModel.Name = user.Name;
+                userModel.Email = user.Email;
+                userModel.Phone = user.Phone;
+                userModel.Address = user.Address;
+                userModel.Role = role.Name;
+                userModels.Add(userModel);
+            }
+            return userModels;
         }
 
         [HttpPost]
-        [Authorize]
-        public IActionResult CreateCustomer([FromBody] User customer)
+        public IActionResult CreateUser([FromBody] User user)
         {
-            if (customer == null)
+            if (user == null)
                 return BadRequest(ModelState);
 
-            if (CheckExistence(customer.UserName))
+            if (CheckExistence(user.UserName))
             {
                 ModelState.AddModelError("", "This id alredy exists!");
                 return StatusCode(422, ModelState);
             }
 
-            if (!_userRepository.CreateCustomer(customer))
+            if (!_userRepository.CreateCustomer(user))
             {
                 ModelState.AddModelError("", "Something went wrong while saving");
                 return StatusCode(500, ModelState);
@@ -89,19 +109,30 @@ namespace WarrantyManagement.Controllers
         }
 
         [HttpPut]
-        [Authorize]
-        public IActionResult EditCustomer([FromBody] User customer)
+        [HasPermission("EDIT_USER")]
+        public async Task<IActionResult> EditUser([FromBody] UserModel userModel)
         {
-            if (customer == null)
+            if (userModel == null)
                 return BadRequest(ModelState);
 
-            if (!CheckExistence(customer.UserName))
+            if (!CheckExistence(userModel.Id))
             {
                 ModelState.AddModelError("", "This id does not exist!");
                 return StatusCode(422, ModelState);
             }
 
-            if (!_userRepository.UpdateCustomer(customer))
+            Role role = await _roleRepository.GetByName(userModel.Role);
+
+            User user = await _userRepository.GetCustomerById(userModel.Id);
+            user.Name = userModel.Name;
+            user.Password = userModel.Password;
+            user.Email = userModel.Email;
+            user.Phone = userModel.Phone;
+            user.Address = userModel.Address;
+            user.RoleId = role.Id;
+            user.Role = role;
+
+            if (!await _userRepository.UpdateCustomer(user))
             {
                 ModelState.AddModelError("", "Something went wrong while saving");
                 return StatusCode(500, ModelState);

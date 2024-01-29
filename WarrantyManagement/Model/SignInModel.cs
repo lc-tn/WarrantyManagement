@@ -4,9 +4,9 @@ namespace WarrantyManagement.Model
 {
     public class SignInModel
     {
-        [Required]
+        [Required(ErrorMessage = "Email is required.")]
         public string UserName { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Password is required.")]
         public string Password { get; set; }
     }
 }

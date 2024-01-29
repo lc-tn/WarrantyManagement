@@ -4,6 +4,7 @@ using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using WarrantyManagement.Authorization;
 using WarrantyManagement.Entities;
 using WarrantyManagement.Model;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
@@ -17,16 +18,18 @@ namespace WarrantyManagement.Repositories
         private readonly SignInManager<User> _signInManager;
         private readonly IConfiguration _configuration;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly PermissionRepository _permissionReporitory;
 
         public UserRepository(WarrantyManagementDbContext context, UserManager<User> userManager,
             SignInManager<User> signInManager, IConfiguration configuration, 
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager, PermissionRepository permissionRepository)
         {
             this._context = context;
             this._userManager = userManager;
             this._signInManager = signInManager;
             this._configuration = configuration;
             this._roleManager = roleManager;
+            this._permissionReporitory = permissionRepository;
         }
 
         public async Task<string> SignInAsync(SignInModel model)
@@ -50,13 +53,19 @@ namespace WarrantyManagement.Repositories
                 authClaims.Add(new Claim(ClaimTypes.Role, role.ToString()));
             }
 
+            var permissions = await _permissionReporitory.GetByRoleId(user.RoleId);
+            foreach (var permission in permissions)
+            {
+                authClaims.Add(new Claim("Permission", permission.Name.ToString()));
+            }
+
             var authenKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
 
             var token = new JwtSecurityToken
                 (
                     issuer: _configuration["JWT:ValidIssuer"],
                     audience: _configuration["JWT:ValidAudience"],
-                    expires: DateTime.Now.AddMinutes(1),
+                    expires: DateTime.Now.AddMinutes(5),
                     claims: authClaims,
                     signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha256Signature)
                 );
@@ -72,25 +81,26 @@ namespace WarrantyManagement.Repositories
                 Name = signUpModel.Name,
                 Email = signUpModel.Email,
                 Phone = signUpModel.Phone,
-                Address = signUpModel.Address
+                Address = signUpModel.Address,
+                RoleId = 1
             };
             var result = await _userManager.CreateAsync(user, signUpModel.Password);
             
             if (result.Succeeded)
             {
-                if (!await _roleManager.RoleExistsAsync(RoleModel.CUSTOMER))
+                if (!await _roleManager.RoleExistsAsync(Authorization.Role.CUSTOMER))
                 {
-                    await _roleManager.CreateAsync(new IdentityRole(RoleModel.CUSTOMER));
+                    await _roleManager.CreateAsync(new IdentityRole(Authorization.Role.CUSTOMER));
                 }
 
-                await _userManager.AddToRoleAsync(user, RoleModel.CUSTOMER);
+                await _userManager.AddToRoleAsync(user, Authorization.Role.CUSTOMER);
             }            
             return result;
         }
 
         public bool CheckExistence(string id)
         {
-            return _context.Customers.Any(c => c.UserName.Equals(id));
+            return _context.Customers.Any(c => c.UserName.Equals(id) || c.Id.Equals(id));
         }
 
         public bool Save()
@@ -99,14 +109,19 @@ namespace WarrantyManagement.Repositories
             return saved > 0 ? true : false;
         }
 
-        public List<User> GetAll()
+        public async Task<List<User>> GetAll()
         {
             return _context.Customers.ToList();
         }
 
-        public User GetCustomerById(string id)
+        public async Task<User> GetCustomerByname(string name)
         {
-            return _context.Customers.Where(c => c.UserName.Equals(id)).SingleOrDefault();
+            return _context.Customers.Where(c => c.UserName.Equals(name)).SingleOrDefault();
+        }
+
+        public async Task<User> GetCustomerById(string id)
+        {
+            return _context.Customers.Where(c => c.Id.Equals(id)).SingleOrDefault();
         }
 
         public bool CreateCustomer(User customer)
@@ -115,7 +130,7 @@ namespace WarrantyManagement.Repositories
             return Save();
         }
 
-        public bool UpdateCustomer(User customer)
+        public async Task<bool> UpdateCustomer(User customer)
         {
             _context.Update(customer);
             return Save();

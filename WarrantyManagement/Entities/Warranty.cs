@@ -7,7 +7,9 @@ namespace WarrantyManagement.Entities
         [Key]
         public int Id { get; set; }
         public string Description { get; set; }
-        public DateTime CreateDate { get; set; } = DateTime.Now;
+        public DateTime CreateDate { get; set; }
+
+        //public DateTime ApointmentDate { get; set; }
 
         public string Status { get; set; }
 

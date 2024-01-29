@@ -22,12 +22,17 @@ namespace WarrantyManagement.Repositories
             return saved > 0 ? true : false;
         }
 
-        public List<Warranty> GetAll()
+        public async Task<List<Warranty>> GetAll()
         {
             return _context.Warranties.ToList();
         }
 
-        public bool CreateCustomer(Warranty warranty)
+        public async Task<Warranty> GetWarrantyById(int id)
+        {
+            return _context.Warranties.Where(w => w.Id == id).SingleOrDefault();
+        }
+
+        public bool CreateWarranty(Warranty warranty)
         {
             _context.Add(warranty);
             return Save();

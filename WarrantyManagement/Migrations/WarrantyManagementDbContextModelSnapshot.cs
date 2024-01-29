@@ -202,6 +202,55 @@ namespace WarrantyManagement.Migrations
                     b.ToTable("Devices");
                 });
 
+            modelBuilder.Entity("WarrantyManagement.Entities.Permission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Permissions");
+                });
+
+            modelBuilder.Entity("WarrantyManagement.Entities.Role", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+                });
+
+            modelBuilder.Entity("WarrantyManagement.Entities.RolePermission", b =>
+                {
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PermissionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("RoleId", "PermissionId");
+
+                    b.HasIndex("PermissionId");
+
+                    b.ToTable("RolePermissions");
+                });
+
             modelBuilder.Entity("WarrantyManagement.Entities.User", b =>
                 {
                     b.Property<string>("Id")
@@ -261,6 +310,9 @@ namespace WarrantyManagement.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -280,6 +332,8 @@ namespace WarrantyManagement.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -381,6 +435,36 @@ namespace WarrantyManagement.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("WarrantyManagement.Entities.RolePermission", b =>
+                {
+                    b.HasOne("WarrantyManagement.Entities.Permission", "Permission")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WarrantyManagement.Entities.Role", "Role")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Permission");
+
+                    b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("WarrantyManagement.Entities.User", b =>
+                {
+                    b.HasOne("WarrantyManagement.Entities.Role", "Roles")
+                        .WithMany("Users")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Roles");
+                });
+
             modelBuilder.Entity("WarrantyManagement.Entities.Warranty", b =>
                 {
                     b.HasOne("WarrantyManagement.Entities.User", "Customer")
@@ -408,6 +492,18 @@ namespace WarrantyManagement.Migrations
             modelBuilder.Entity("WarrantyManagement.Entities.Device", b =>
                 {
                     b.Navigation("Warranties");
+                });
+
+            modelBuilder.Entity("WarrantyManagement.Entities.Permission", b =>
+                {
+                    b.Navigation("RolePermissions");
+                });
+
+            modelBuilder.Entity("WarrantyManagement.Entities.Role", b =>
+                {
+                    b.Navigation("RolePermissions");
+
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("WarrantyManagement.Entities.User", b =>

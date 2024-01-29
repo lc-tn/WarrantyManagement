@@ -15,7 +15,9 @@ namespace WarrantyManagement.Repositories
         public DbSet<User> Customers { get; set; }
         public DbSet<Device> Devices { get; set; }
         public DbSet<Warranty> Warranties { get; set; }
-
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<Permission> Permissions { get; set; }
+        public DbSet<RolePermission> RolePermissions { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -34,6 +36,19 @@ namespace WarrantyManagement.Repositories
                 .HasMany(d => d.Warranties)
                 .WithOne(w => w.Device)
                 .HasForeignKey(w => w.DeviceId);
+
+            modelBuilder.Entity<RolePermission>()
+                .HasKey(rp => new {rp.RoleId, rp.PermissionId});
+
+            modelBuilder.Entity<RolePermission>()
+                .HasOne(rp => rp.Role)
+                .WithMany(rp => rp.RolePermissions)
+                .HasForeignKey(rp => rp.RoleId);
+
+            modelBuilder.Entity<RolePermission>()
+                .HasOne(rp => rp.Permission)
+                .WithMany(rp => rp.RolePermissions)
+                .HasForeignKey(rp => rp.PermissionId);
         }
     }
 
