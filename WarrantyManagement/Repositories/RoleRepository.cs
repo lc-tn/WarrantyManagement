@@ -15,22 +15,22 @@ namespace WarrantyManagement.Repositories
 
         public async Task<List<Role>> GetAll()
         {
-            return _context.Roles.ToList();
+            return await _context.Roles.ToListAsync();
         }
 
         public async Task<Role> GetById(int id)
         {
-            return _context.Roles.Where(c => c.Id == id).SingleOrDefault();
+            return await _context.Roles.SingleAsync(c => c.Id == id);
         }
 
         public async Task<Role> GetByName(string name)
         {
-            return _context.Roles.Where(c => c.Name.Equals(name)).SingleOrDefault();
+            return await _context.Roles.SingleAsync(c => c.Name.Equals(name));
         }
 
         public async Task<Role> CreateRole(Role role)
         {
-            _context.Roles.Add(role);
+            await _context.Roles.AddAsync(role);
             _context.SaveChanges();
             return role;
         }

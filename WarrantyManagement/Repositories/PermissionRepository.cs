@@ -19,12 +19,12 @@ namespace WarrantyManagement.Repositories
 
         public async Task<List<Permission>> GetAll()
         {
-            return _context.Permissions.ToList();
+            return await _context.Permissions.ToListAsync();
         }
 
         public async Task<Permission> GetById(int id)
         {
-            return _context.Permissions.Where(p => p.Id == id).SingleOrDefault();
+            return await _context.Permissions.SingleAsync(p => p.Id == id);
         }
     }
 }

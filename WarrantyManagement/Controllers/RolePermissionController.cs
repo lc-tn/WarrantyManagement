@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using WarrantyManagement.Authorization;
 using WarrantyManagement.Entities;
 using WarrantyManagement.Model;
@@ -27,20 +26,22 @@ namespace WarrantyManagement.Controllers
         [HasPermission("EDIT_PERMISSION")]
         public async Task<IActionResult> EditRolePermission(RolePermissionRequestModel rolePermissionModel)
         {
-            await _rolePermissionRepository.DeleteByRole(rolePermissionModel.RoleId);
-            List<int> permissionIds = rolePermissionModel.PermissionId;
-            foreach (int permissionId in permissionIds)
+            bool check = await _rolePermissionRepository.DeleteByRole(rolePermissionModel.RoleId);
+            if (check)
             {
-                RolePermission rolePermission = new RolePermission()
+                List<int> permissionIds = rolePermissionModel.PermissionId;
+                foreach (int permissionId in permissionIds)
                 {
-                    RoleId = rolePermissionModel.RoleId,
-                    Role = await _roleRepository.GetById(rolePermissionModel.RoleId),
-                    PermissionId = permissionId,
-                    Permission = await _permissionRepository.GetById(permissionId),
-                };
-                await _rolePermissionRepository.Add(rolePermission);
+                    RolePermission rolePermission = new RolePermission()
+                    {
+                        RoleId = rolePermissionModel.RoleId,
+                        Role = await _roleRepository.GetById(rolePermissionModel.RoleId),
+                        PermissionId = permissionId,
+                        Permission = await _permissionRepository.GetById(permissionId),
+                    };
+                    await _rolePermissionRepository.Add(rolePermission);
+                }
             }
-            
             return Ok("Successfully creating!");
         }
     }

@@ -1,4 +1,6 @@
-﻿using WarrantyManagement.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using WarrantyManagement.Authorization;
+using WarrantyManagement.Entities;
 
 namespace WarrantyManagement.Repositories
 {
@@ -11,14 +13,50 @@ namespace WarrantyManagement.Repositories
             _context = context;
         }
 
-        public async Task<Device> GetDeviceByIdAsnc(int id)
+        public bool Save()
         {
-            return _context.Devices.Where(c => c.Id == id).SingleOrDefault();
+            var saved = _context.SaveChanges();
+            return saved > 0 ? true : false;
         }
 
-        public async Task<Device> GetDeviceByNameAsnc(string name) 
+        public async Task<List<Device>> GetAll()
         {
-            return _context.Devices.Where(c => c.Name.Equals(name)).SingleOrDefault();
+            return await _context.Devices.ToListAsync();
+        }
+
+        public async Task<Device> GetDeviceById(int id)
+        {
+            return await _context.Devices.SingleOrDefaultAsync(c => c.Id == id);
+        }
+
+        public async Task<Device?> GetDeviceByName(string name) 
+        {
+            return await _context.Devices.Where(c => c.Name.Equals(name)).SingleOrDefaultAsync();
+        }
+
+        public async Task<List<Device>> GetDeviceByUser(string userId)
+        {
+            return await _context.Devices.Where(c => c.UserId.Equals(userId)).ToListAsync();
+        }
+
+        public async Task<bool> Create(Device device)
+        {
+            var entry = await _context.AddAsync(device);
+            if (entry.State == EntityState.Added)
+            {
+                _context.SaveChanges();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool EditDevices (List<Device> devices)
+        {
+             _context.UpdateRange(devices);
+            return true;
         }
     }
 }

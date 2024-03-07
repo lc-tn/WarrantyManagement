@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using WarrantyManagement.Authorization;
 using WarrantyManagement.Entities;
 using WarrantyManagement.Model;
 
@@ -28,9 +29,13 @@ namespace WarrantyManagement.Repositories
 
         public async Task<bool> Add(RolePermission rolePermission)
         {
-            await _context.AddAsync(rolePermission);
-            await _context.SaveChangesAsync();
-            return true;
+            var entry = await _context.AddAsync(rolePermission);
+            if (entry.State == EntityState.Added)
+            {
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿using WarrantyManagement.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Drawing.Printing;
+using WarrantyManagement.Authorization;
+using WarrantyManagement.Entities;
 
 namespace WarrantyManagement.Repositories
 {
@@ -22,25 +25,45 @@ namespace WarrantyManagement.Repositories
             return saved > 0 ? true : false;
         }
 
-        public async Task<List<Warranty>> GetAll()
+        public async Task<List<Warranty>> GetAll(int pageNumber)
         {
-            return _context.Warranties.ToList();
+            return await _context.Warranties.OrderByDescending(w => w.CreateDate)
+                .Skip(pageNumber).Take(3).ToListAsync();
+        }
+
+        public Task<int> Total()
+        {
+            return _context.Warranties.CountAsync();
         }
 
         public async Task<Warranty> GetWarrantyById(int id)
         {
-            return _context.Warranties.Where(w => w.Id == id).SingleOrDefault();
+            return await _context.Warranties.SingleOrDefaultAsync(w => w.Id == id);
         }
 
         public bool CreateWarranty(Warranty warranty)
         {
-            _context.Add(warranty);
-            return Save();
+            var entry = _context.Add(warranty);
+            if (entry.State == EntityState.Added)
+            {
+                return true;
+            }
+            return false;
         }
 
-        public bool UpdateCustomer(Warranty warranty)
+        public bool EditWarranty(Warranty warranty)
         {
-            _context.Update(warranty);
+            var entry = _context.Update(warranty);
+            if(entry.State == EntityState.Modified)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool DeleteWarranty(Warranty warranty)
+        {
+            _context.Remove(warranty);
             return Save();
         }
     }

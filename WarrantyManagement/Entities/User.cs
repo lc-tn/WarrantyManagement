@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace WarrantyManagement.Entities
@@ -19,5 +19,11 @@ namespace WarrantyManagement.Entities
         //one-to-many relationship with Warranty
         [JsonIgnore]
         public ICollection<Warranty> Warranties { get; set; } = new List<Warranty>();
+
+        [JsonIgnore]
+        public ICollection<WarrantyHistory> WarrantyHistories { get; set; } = new List<WarrantyHistory>();
+
+        //[JsonIgnore]
+        //public ICollection<Device> Devices { get; set; } = new List<Device>();
     }
 }

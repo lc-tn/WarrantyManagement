@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
@@ -65,7 +66,7 @@ namespace WarrantyManagement.Repositories
                 (
                     issuer: _configuration["JWT:ValidIssuer"],
                     audience: _configuration["JWT:ValidAudience"],
-                    expires: DateTime.Now.AddMinutes(5),
+                    expires: DateTime.Now.AddMinutes(60),
                     claims: authClaims,
                     signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha256Signature)
                 );
@@ -111,28 +112,38 @@ namespace WarrantyManagement.Repositories
 
         public async Task<List<User>> GetAll()
         {
-            return _context.Customers.ToList();
+            return await _context.Customers.ToListAsync();
         }
 
-        public async Task<User> GetCustomerByname(string name)
+        public async Task<User> GetUserByname (string name)
         {
-            return _context.Customers.Where(c => c.UserName.Equals(name)).SingleOrDefault();
+            return await _context.Customers.SingleAsync(c => c.UserName.Equals(name));
         }
 
-        public async Task<User> GetCustomerById(string id)
+        public async Task<User> GetUserById(string id)
         {
-            return _context.Customers.Where(c => c.Id.Equals(id)).SingleOrDefault();
+            return await _context.Customers.SingleAsync(c => c.Id.Equals(id));
         }
 
-        public bool CreateCustomer(User customer)
+        public async Task<List<User>> GetUserByRole(int roleId)
         {
-            _context.Add(customer);
-            return Save();
+            return await _context.Customers.Where(c => c.RoleId.Equals(roleId)).ToListAsync();
         }
 
-        public async Task<bool> UpdateCustomer(User customer)
+        public bool CreateUser(User user)
         {
-            _context.Update(customer);
+            var entry = _context.Add(user);
+            if (entry.State == EntityState.Added)
+            {
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        public bool UpdateUser(User user)
+        {
+            _context.Update(user);
             return Save();
         }
     }

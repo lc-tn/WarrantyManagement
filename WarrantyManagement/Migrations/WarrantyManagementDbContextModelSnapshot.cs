@@ -155,23 +155,6 @@ namespace WarrantyManagement.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("WarrantyManagement.Entities.Category", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Categories");
-                });
-
             modelBuilder.Entity("WarrantyManagement.Entities.Device", b =>
                 {
                     b.Property<int>("Id")
@@ -180,12 +163,15 @@ namespace WarrantyManagement.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Modifier")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -195,9 +181,11 @@ namespace WarrantyManagement.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("CategoryId");
+                    b.HasKey("Id");
 
                     b.ToTable("Devices");
                 });
@@ -346,12 +334,88 @@ namespace WarrantyManagement.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("AppointmentDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CustomerId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Modifier")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Sale")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Technician")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("WarrantyDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("Warranties");
+                });
+
+            modelBuilder.Entity("WarrantyManagement.Entities.WarrantyDevice", b =>
+                {
+                    b.Property<int>("WarrantyId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DeviceId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Modifier")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Result")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("WarrantyId", "DeviceId");
+
+                    b.HasIndex("DeviceId");
+
+                    b.ToTable("WarrantyDevices");
+                });
+
+            modelBuilder.Entity("WarrantyManagement.Entities.WarrantyDeviceHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -360,17 +424,75 @@ namespace WarrantyManagement.Migrations
                     b.Property<int>("DeviceId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Modifier")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Result")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("WarrantyId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId");
+                    b.ToTable("WarrantyDeviceHistories");
+                });
+
+            modelBuilder.Entity("WarrantyManagement.Entities.WarrantyHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("DeviceId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Modifier")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Sale")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Technician")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("WarrantyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("WarrantyId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("DeviceId");
 
-                    b.ToTable("Warranties");
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("WarrantyId");
+
+                    b.ToTable("WarrantyHistories");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -424,17 +546,6 @@ namespace WarrantyManagement.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WarrantyManagement.Entities.Device", b =>
-                {
-                    b.HasOne("WarrantyManagement.Entities.Category", "Category")
-                        .WithMany("Devices")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-                });
-
             modelBuilder.Entity("WarrantyManagement.Entities.RolePermission", b =>
                 {
                     b.HasOne("WarrantyManagement.Entities.Permission", "Permission")
@@ -456,13 +567,13 @@ namespace WarrantyManagement.Migrations
 
             modelBuilder.Entity("WarrantyManagement.Entities.User", b =>
                 {
-                    b.HasOne("WarrantyManagement.Entities.Role", "Roles")
+                    b.HasOne("WarrantyManagement.Entities.Role", "Role")
                         .WithMany("Users")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Roles");
+                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("WarrantyManagement.Entities.Warranty", b =>
@@ -473,25 +584,52 @@ namespace WarrantyManagement.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("WarrantyManagement.Entities.WarrantyDevice", b =>
+                {
                     b.HasOne("WarrantyManagement.Entities.Device", "Device")
-                        .WithMany("Warranties")
+                        .WithMany("WarrantyDevices")
                         .HasForeignKey("DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Customer");
+                    b.HasOne("WarrantyManagement.Entities.Warranty", "Warranty")
+                        .WithMany("WarrantyDevices")
+                        .HasForeignKey("WarrantyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Device");
+
+                    b.Navigation("Warranty");
                 });
 
-            modelBuilder.Entity("WarrantyManagement.Entities.Category", b =>
+            modelBuilder.Entity("WarrantyManagement.Entities.WarrantyHistory", b =>
                 {
-                    b.Navigation("Devices");
+                    b.HasOne("WarrantyManagement.Entities.Device", null)
+                        .WithMany("WarrantyHistories")
+                        .HasForeignKey("DeviceId");
+
+                    b.HasOne("WarrantyManagement.Entities.User", null)
+                        .WithMany("WarrantyHistories")
+                        .HasForeignKey("UserId");
+
+                    b.HasOne("WarrantyManagement.Entities.Warranty", "Warranty")
+                        .WithMany("WarrantyHistories")
+                        .HasForeignKey("WarrantyId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Warranty");
                 });
 
             modelBuilder.Entity("WarrantyManagement.Entities.Device", b =>
                 {
-                    b.Navigation("Warranties");
+                    b.Navigation("WarrantyDevices");
+
+                    b.Navigation("WarrantyHistories");
                 });
 
             modelBuilder.Entity("WarrantyManagement.Entities.Permission", b =>
@@ -509,6 +647,15 @@ namespace WarrantyManagement.Migrations
             modelBuilder.Entity("WarrantyManagement.Entities.User", b =>
                 {
                     b.Navigation("Warranties");
+
+                    b.Navigation("WarrantyHistories");
+                });
+
+            modelBuilder.Entity("WarrantyManagement.Entities.Warranty", b =>
+                {
+                    b.Navigation("WarrantyDevices");
+
+                    b.Navigation("WarrantyHistories");
                 });
 #pragma warning restore 612, 618
         }

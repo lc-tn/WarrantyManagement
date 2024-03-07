@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace WarrantyManagement.Entities
 {
@@ -9,12 +10,17 @@ namespace WarrantyManagement.Entities
         public string Name { get; set; } = null!;
         public string Description { get; set; }
         public string Status { get; set; }
-
-        //many-to-one relationship with Category
-        public int CategoryId { get; set; }
-        public Category Category { get; set; } = null!;
+        public string? Modifier { get; set; }
+        public DateTime? ModifyDate { get; set; }
 
         //many-to-one relationship with Warranty
-        public ICollection<Warranty> Warranties { get; set; } = new List<Warranty>();
+        [JsonIgnore]
+        public ICollection<WarrantyDevice> WarrantyDevices { get; set; }
+
+        //many-to-many relationship with WarrantyDevice
+        public ICollection<WarrantyHistory> WarrantyHistories { get; set; } = new List<WarrantyHistory>();
+
+        //one-to-many relationship with User
+        public string UserId { get; set; }
     }
 }

@@ -51,12 +51,26 @@ namespace WarrantyManagement.Controllers
 
         [HttpGet("{id}")]
         [HasPermission("VIEW_USER")]
-        public async Task<IActionResult> GetCustomerById(string id)
+        public async Task<IActionResult> GetUserById(string id)
         {
-            User customer = await _userRepository.GetCustomerById(id);
-            if (customer != null)
+            User user = await _userRepository.GetUserById(id);
+            if (user != null)
             {
-                return Ok(customer);
+                return Ok(user);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpGet("role/{roleId}")]
+        public async Task<IActionResult> GetUserByRole(int roleId)
+        {
+            List<User> users =  await _userRepository.GetUserByRole(roleId);
+            if (users != null)
+            {
+                return Ok(users);
             }
             else
             {
@@ -99,7 +113,7 @@ namespace WarrantyManagement.Controllers
                 return StatusCode(422, ModelState);
             }
 
-            if (!_userRepository.CreateCustomer(user))
+            if (!_userRepository.CreateUser(user))
             {
                 ModelState.AddModelError("", "Something went wrong while saving");
                 return StatusCode(500, ModelState);
@@ -123,7 +137,7 @@ namespace WarrantyManagement.Controllers
 
             Role role = await _roleRepository.GetByName(userModel.Role);
 
-            User user = await _userRepository.GetCustomerById(userModel.Id);
+            User user = await _userRepository.GetUserById(userModel.Id);
             user.Name = userModel.Name;
             user.Password = userModel.Password;
             user.Email = userModel.Email;
@@ -132,7 +146,7 @@ namespace WarrantyManagement.Controllers
             user.RoleId = role.Id;
             user.Role = role;
 
-            if (!await _userRepository.UpdateCustomer(user))
+            if (!_userRepository.UpdateUser(user))
             {
                 ModelState.AddModelError("", "Something went wrong while saving");
                 return StatusCode(500, ModelState);
