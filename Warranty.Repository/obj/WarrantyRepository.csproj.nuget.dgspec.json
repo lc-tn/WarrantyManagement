@@ -1,15 +1,15 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Lc_Tn\\Desktop\\ALL\\Intern\\WarrantyManagement\\Warranty.Repository\\Warranty.Repository.csproj": {}
+    "C:\\Users\\Lc_Tn\\Desktop\\ALL\\Intern\\WarrantyManagement\\Warranty.Repository\\WarrantyRepository.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Lc_Tn\\Desktop\\ALL\\Intern\\WarrantyManagement\\Warranty.Repository\\Warranty.Repository.csproj": {
+    "C:\\Users\\Lc_Tn\\Desktop\\ALL\\Intern\\WarrantyManagement\\Warranty.Repository\\WarrantyRepository.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Lc_Tn\\Desktop\\ALL\\Intern\\WarrantyManagement\\Warranty.Repository\\Warranty.Repository.csproj",
-        "projectName": "Warranty.Repository",
-        "projectPath": "C:\\Users\\Lc_Tn\\Desktop\\ALL\\Intern\\WarrantyManagement\\Warranty.Repository\\Warranty.Repository.csproj",
+        "projectUniqueName": "C:\\Users\\Lc_Tn\\Desktop\\ALL\\Intern\\WarrantyManagement\\Warranty.Repository\\WarrantyRepository.csproj",
+        "projectName": "WarrantyRepository",
+        "projectPath": "C:\\Users\\Lc_Tn\\Desktop\\ALL\\Intern\\WarrantyManagement\\Warranty.Repository\\WarrantyRepository.csproj",
         "packagesPath": "C:\\Users\\Lc_Tn\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\Lc_Tn\\Desktop\\ALL\\Intern\\WarrantyManagement\\Warranty.Repository\\obj\\",
         "projectStyle": "PackageReference",

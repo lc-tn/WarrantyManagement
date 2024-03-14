@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WarrantyManagement.Authorization;
 using WarrantyManagement.Entities;
+using WarrantyRepository.IRepositories;
 
 namespace WarrantyManagement.Repositories
 {
-    public class DeviceRepository
+    public class DeviceRepository :IDeviceRepository
     {
         private readonly WarrantyManagementDbContext _context;
 

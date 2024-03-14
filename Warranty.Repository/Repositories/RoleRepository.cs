@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WarrantyManagement.Entities;
+using WarrantyRepository.IRepositories;
 
 namespace WarrantyManagement.Repositories
 {
-    public class RoleRepository
+    public class RoleRepository : IRoleRepository
     {
         private readonly WarrantyManagementDbContext _context;
 

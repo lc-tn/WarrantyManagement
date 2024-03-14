@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using WarrantyManagement.Authorization;
 using WarrantyManagement.Entities;
 using WarrantyManagement.Model;
 using WarrantyManagement.Repositories;
+using WarrantyRepository.IRepositories;
 using Role = WarrantyManagement.Entities.Role;
 
 namespace WarrantyManagement.Controllers
@@ -12,11 +12,11 @@ namespace WarrantyManagement.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly UserRepository _userRepository;
-        private readonly RoleRepository _roleRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IRoleRepository _roleRepository;
 
-        public UserController(UserRepository userRepository,
-             RoleRepository roleRepository)
+        public UserController(IUserRepository userRepository,
+             IRoleRepository roleRepository)
         {
             _userRepository = userRepository;
             _roleRepository = roleRepository;

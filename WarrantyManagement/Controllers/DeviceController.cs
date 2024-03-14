@@ -3,6 +3,7 @@ using WarrantyManagement.Authorization;
 using WarrantyManagement.Entities;
 using WarrantyManagement.Model;
 using WarrantyManagement.Repositories;
+using WarrantyRepository.IRepositories;
 
 namespace WarrantyManagement.Controllers
 {
@@ -10,9 +11,9 @@ namespace WarrantyManagement.Controllers
     [ApiController]
     public class DeviceController : ControllerBase
     {
-        private readonly DeviceRepository _deviceRepository;
+        private readonly IDeviceRepository _deviceRepository;
 
-        public DeviceController(DeviceRepository deviceRepository)
+        public DeviceController(IDeviceRepository deviceRepository)
         {
             _deviceRepository = deviceRepository;
         }

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using WarrantyRepository.IRepositories;
 using WarrantyManagement.Entities;
 using WarrantyManagement.Repositories;
 
@@ -49,15 +50,15 @@ namespace WarrantyManagement
     });
             });
             // Singleton - Scoped - Trans
-            builder.Services.AddScoped<UserRepository>();
-            builder.Services.AddScoped<PermissionRepository>();
-            builder.Services.AddScoped<DeviceRepository>();
-            builder.Services.AddScoped<WarrantyRepository>();
-            builder.Services.AddScoped<WarrantyHistoryRepository>();
-            builder.Services.AddScoped<WarrantyDeviceRepository>();
-            builder.Services.AddScoped<WarrantyDeviceHistoryRepository>();
-            builder.Services.AddScoped<RoleRepository>();
-            builder.Services.AddScoped<RolePermissionRepository>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
+            builder.Services.AddScoped<IDeviceRepository, DeviceRepository>();
+            builder.Services.AddScoped<IWarrantyRepository, Repositories.WarrantyRepository>();
+            builder.Services.AddScoped<IWarrantyHistoryRepository, WarrantyHistoryRepository>();
+            builder.Services.AddScoped<IWarrantyDeviceRepository, WarrantyDeviceRepository>();
+            builder.Services.AddScoped<IWarrantyDeviceHistoryRepository, WarrantyDeviceHistoryRepository>();
+            builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+            builder.Services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
 
             // UnitOfWork
 
@@ -104,7 +105,7 @@ namespace WarrantyManagement
                     .RequireAuthenticatedUser().Build());
 
                 var serviceProvider = builder.Services.BuildServiceProvider();
-                var permissionRepository = serviceProvider.GetRequiredService<PermissionRepository>();
+                var permissionRepository = serviceProvider.GetRequiredService<IPermissionRepository>();
 
                 var permissions = permissionRepository.GetAll().Result;
 

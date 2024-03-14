@@ -2,6 +2,7 @@
 using WarrantyManagement.Authorization;
 using WarrantyManagement.Entities;
 using WarrantyManagement.Repositories;
+using WarrantyRepository.IRepositories;
 
 namespace WarrantyManagement.Controllers
 {
@@ -9,10 +10,10 @@ namespace WarrantyManagement.Controllers
     [ApiController]
     public class PermissionController
     {
-        private readonly RoleRepository _roleRepository;
-        private readonly PermissionRepository _permissionRepository;
+        private readonly IRoleRepository _roleRepository;
+        private readonly IPermissionRepository _permissionRepository;
 
-        public PermissionController(RoleRepository roleRepository, PermissionRepository permissionRepository)
+        public PermissionController(IRoleRepository roleRepository, IPermissionRepository permissionRepository)
         {
             _roleRepository = roleRepository;
             _permissionRepository = permissionRepository;

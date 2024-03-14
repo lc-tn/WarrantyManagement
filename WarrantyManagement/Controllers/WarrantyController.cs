@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Globalization;
+using WarrantyRepository.IRepositories;
 using WarrantyManagement.Authorization;
 using WarrantyManagement.Entities;
 using WarrantyManagement.Model;
-using WarrantyManagement.Repositories;
 
 namespace WarrantyManagement.Controllers
 {
@@ -11,37 +10,27 @@ namespace WarrantyManagement.Controllers
     [ApiController]
     public class WarrantyController : Controller
     {
-        private readonly WarrantyRepository _warrantyRepository;
-        private readonly DeviceRepository _deviceRepository;
-        private readonly UserRepository _userRepository;
-        private readonly WarrantyHistoryRepository _warrantyHistoryRepository;
-        private readonly WarrantyDeviceRepository _warrantyDeviceRepository;
-        private readonly WarrantyDeviceHistoryRepository _warrantyDeviceHistoryRepository;
+        private readonly IWarrantyRepository _warrantyRepository;
+        private readonly IDeviceRepository _deviceRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IWarrantyDeviceRepository _warrantyDeviceRepository;
 
-        public WarrantyController(WarrantyRepository warrantyRepository, DeviceRepository deviceRepository,
-            UserRepository userRepository, WarrantyHistoryRepository warrantyHistoryRepository,
-            WarrantyDeviceRepository warrantyDeviceRepository,
-            WarrantyDeviceHistoryRepository warrantyDeviceHistoryRepository)
+        public WarrantyController(IWarrantyRepository warrantyRepository, IDeviceRepository deviceRepository,
+            IUserRepository userRepository,
+            IWarrantyDeviceRepository warrantyDeviceRepository)
         {
             _warrantyRepository = warrantyRepository;
             _deviceRepository = deviceRepository;
             _userRepository = userRepository;
-            _warrantyHistoryRepository = warrantyHistoryRepository;
             _warrantyDeviceRepository = warrantyDeviceRepository;
-            _warrantyDeviceHistoryRepository = warrantyDeviceHistoryRepository;
-        }
-
-        private bool CheckExistence(int id)
-        {
-            return _warrantyRepository.CheckExistence(id);
         }
 
         [HttpGet("paging/{pageNumber}")]
-        //[HasPermission("VIEW_WARRANTY")]
-        public async Task<List<WarrantyModel>> GetAllWarranty(int pageNumber)
+        [HasPermission("VIEW_WARRANTY")]
+        public async Task<List<WarrantyModel>> GetAllWarrantyPagination(int pageNumber)
         {
             List<Warranty> warranties = new List<Warranty>();
-            warranties = await _warrantyRepository.GetAll(pageNumber * 3);
+            warranties = await _warrantyRepository.GetAllPagination(pageNumber * 3);
             List<WarrantyModel> warrantyList = new List<WarrantyModel>();
             foreach (Warranty warranty in warranties)
             {
@@ -52,6 +41,85 @@ namespace WarrantyManagement.Controllers
                 warrantyModel.CreateDate = warranty.CreateDate;
                 warrantyModel.Status = warranty.Status;
                 warrantyModel.CustomerName = user.UserName;
+
+                warrantyList.Add(warrantyModel);
+            }
+            return warrantyList;
+        }
+
+        [HttpGet]
+        [HasPermission("VIEW_WARRANTY")]
+        public async Task<List<GetWarrantyByIdModel>> GetAllWarranty()
+        {
+            List<Warranty> warranties = new List<Warranty>();
+            warranties = await _warrantyRepository.GetAll();
+            List<GetWarrantyByIdModel> warrantyList = new List<GetWarrantyByIdModel>();
+            foreach (Warranty warranty in warranties)
+            {
+                GetWarrantyByIdModel warrantyModel = new GetWarrantyByIdModel();
+                User user = await _userRepository.GetUserById(warranty.CustomerId);
+
+                warrantyModel.Id = warranty.Id;
+                warrantyModel.CreateDate= warranty.CreateDate;
+                warrantyModel.Description = warranty.Description;
+                warrantyModel.AppointmentDate = warranty.AppointmentDate;
+                warrantyModel.WarrantyDate = warranty.WarrantyDate;
+                warrantyModel.Sale = warranty.Sale;
+                warrantyModel.Technician = warranty.Technician;
+                warrantyModel.CustomerName = user.UserName;
+                warrantyModel.Status = warranty.Status;
+
+                warrantyList.Add(warrantyModel);
+            }
+            return warrantyList;
+        }
+
+        [HttpGet("status/{status}")]
+        [HasPermission("VIEW_WARRANTY")]
+        public async Task<List<GetWarrantyByIdModel>> GetWarrantyByStatus(string status)
+        {
+            List<Warranty> warranties = await _warrantyRepository.GetByStatus(status);
+            List<GetWarrantyByIdModel> warrantyList = new List<GetWarrantyByIdModel>();
+            foreach (Warranty warranty in warranties)
+            {
+                GetWarrantyByIdModel warrantyModel = new GetWarrantyByIdModel();
+                User user = await _userRepository.GetUserById(warranty.CustomerId);
+
+                warrantyModel.Id = warranty.Id;
+                warrantyModel.CreateDate = warranty.CreateDate;
+                warrantyModel.Description = warranty.Description;
+                warrantyModel.AppointmentDate = warranty.AppointmentDate;
+                warrantyModel.WarrantyDate = warranty.WarrantyDate;
+                warrantyModel.Sale = warranty.Sale;
+                warrantyModel.Technician = warranty.Technician;
+                warrantyModel.CustomerName = user.UserName;
+                warrantyModel.Status = warranty.Status;
+
+                warrantyList.Add(warrantyModel);
+            }
+            return warrantyList;
+        }
+
+        [HttpGet("customer/{customerId}")]
+        [HasPermission("VIEW_WARRANTY")]
+        public async Task<List<GetWarrantyByIdModel>> GetWarrantyByCustomer(string customerId)
+        {
+            List<Warranty> warranties = await _warrantyRepository.GetByCustomer(customerId);
+            List<GetWarrantyByIdModel> warrantyList = new List<GetWarrantyByIdModel>();
+            foreach (Warranty warranty in warranties)
+            {
+                GetWarrantyByIdModel warrantyModel = new GetWarrantyByIdModel();
+                User user = await _userRepository.GetUserById(warranty.CustomerId);
+
+                warrantyModel.Id = warranty.Id;
+                warrantyModel.CreateDate = warranty.CreateDate;
+                warrantyModel.Description = warranty.Description;
+                warrantyModel.AppointmentDate = warranty.AppointmentDate;
+                warrantyModel.WarrantyDate = warranty.WarrantyDate;
+                warrantyModel.Sale = warranty.Sale;
+                warrantyModel.Technician = warranty.Technician;
+                warrantyModel.CustomerName = user.UserName;
+                warrantyModel.Status = warranty.Status;
 
                 warrantyList.Add(warrantyModel);
             }
@@ -116,7 +184,7 @@ namespace WarrantyManagement.Controllers
                 Creator = createWarrantyModel.Creator,
                 Modifier = " ",
                 ModifyDate = null,
-                CreateDate = DateTime.UtcNow,
+                CreateDate = DateTime.Now,
                 AppointmentDate = createWarrantyModel.AppointmentDate,
                 WarrantyDate = null,
                 Status = "Chờ xác nhận",
@@ -134,7 +202,7 @@ namespace WarrantyManagement.Controllers
             }
             foreach (DeviceWarrantyModel device in deviceWarranty)
             {
-                WarrantyDevice warrantyDevice = new WarrantyDevice
+                WarrantyDevice warrantyDevice = new()
                 {
                     WarrantyId = warranty.Id,
                     DeviceId = device.Id,
@@ -142,7 +210,7 @@ namespace WarrantyManagement.Controllers
                     Result = " ",
                     Description = device.Description,
                     Modifier = createWarrantyModel.Creator,
-                    ModifyDate = DateTime.UtcNow
+                    ModifyDate = DateTime.Now
                 };
                 if (!_warrantyDeviceRepository.Add(warrantyDevice))
                 {
@@ -155,19 +223,14 @@ namespace WarrantyManagement.Controllers
         }
 
         [HttpPut]
-        //[HasPermission("EDIT_WARRANTY")]
+        [HasPermission("EDIT_WARRANTY")]
         public async Task<IActionResult> EditWarranty ([FromBody] EditWarrantyModel editWarrantyModel)
         {
             //DateTime? warrantyDate = null;
             //string formatStr = "yyyy-MM-ddTHH:mm:ss.fffZ";
             if (editWarrantyModel == null)
                 return BadRequest(ModelState);
-
-            if (!CheckExistence(editWarrantyModel.Id))
-            {
-                ModelState.AddModelError("", "This id does not exist!");
-                return StatusCode(422, ModelState);
-            }    
+            
             List<WarrantyDevice> warrantyDevices = new List<WarrantyDevice>();
 
             Warranty warranty = await _warrantyRepository.GetWarrantyById(editWarrantyModel.Id);

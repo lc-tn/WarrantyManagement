@@ -2,6 +2,7 @@
 using WarrantyManagement.Authorization;
 using WarrantyManagement.Model;
 using WarrantyManagement.Repositories;
+using WarrantyRepository.IRepositories;
 using Role = WarrantyManagement.Entities.Role;
 
 namespace WarrantyManagement.Controllers
@@ -10,13 +11,11 @@ namespace WarrantyManagement.Controllers
     [ApiController]
     public class RoleController : ControllerBase
     {
-        private readonly RoleRepository _roleRepository;
-        private readonly PermissionRepository _permissionRepository;
+        private readonly IRoleRepository _roleRepository;
 
-        public RoleController(RoleRepository roleRepository, PermissionRepository permissionRepository)
+        public RoleController(IRoleRepository roleRepository)
         {
             _roleRepository = roleRepository;
-            _permissionRepository = permissionRepository;
         }
 
         [HttpGet]

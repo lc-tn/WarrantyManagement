@@ -3,6 +3,7 @@ using WarrantyManagement.Authorization;
 using WarrantyManagement.Entities;
 using WarrantyManagement.Model;
 using WarrantyManagement.Repositories;
+using WarrantyRepository.IRepositories;
 
 namespace WarrantyManagement.Controllers
 {
@@ -10,17 +11,10 @@ namespace WarrantyManagement.Controllers
     [ApiController]
     public class WarrantyHistoryController
     {
-        private readonly WarrantyRepository _warrantyRepository;
-        private readonly DeviceRepository _deviceRepository;
-        private readonly UserRepository _userRepository;
-        private readonly WarrantyHistoryRepository _warrantyHistoryRepository;
+        private readonly IWarrantyHistoryRepository _warrantyHistoryRepository;
 
-        public WarrantyHistoryController(WarrantyRepository warrantyRepository, DeviceRepository deviceRepository,
-            UserRepository userRepository, WarrantyHistoryRepository warrantyHistoryRepository)
+        public WarrantyHistoryController(IWarrantyHistoryRepository warrantyHistoryRepository)
         {
-            _warrantyRepository = warrantyRepository;
-            _deviceRepository = deviceRepository;
-            _userRepository = userRepository;
             _warrantyHistoryRepository = warrantyHistoryRepository;
         }
 

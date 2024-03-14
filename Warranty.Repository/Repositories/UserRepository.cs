@@ -1,36 +1,37 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using WarrantyManagement.Authorization;
 using WarrantyManagement.Entities;
 using WarrantyManagement.Model;
+using WarrantyRepository.IRepositories;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
 namespace WarrantyManagement.Repositories
 {
-    public class UserRepository
+    public class UserRepository : IUserRepository
     {
         private readonly WarrantyManagementDbContext _context;
         private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
         private readonly IConfiguration _configuration;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly PermissionRepository _permissionReporitory;
+        private readonly IPermissionRepository _permissionReporitory;
+        private readonly IRoleRepository _rolerRepository;
 
         public UserRepository(WarrantyManagementDbContext context, UserManager<User> userManager,
-            SignInManager<User> signInManager, IConfiguration configuration, 
-            RoleManager<IdentityRole> roleManager, PermissionRepository permissionRepository)
+            IConfiguration configuration, IRoleRepository rolerRepository,
+            RoleManager<IdentityRole> roleManager, IPermissionRepository permissionRepository)
         {
             this._context = context;
             this._userManager = userManager;
-            this._signInManager = signInManager;
             this._configuration = configuration;
             this._roleManager = roleManager;
             this._permissionReporitory = permissionRepository;
+            _rolerRepository = rolerRepository;
         }
 
         public async Task<string> SignInAsync(SignInModel model)
@@ -47,12 +48,12 @@ namespace WarrantyManagement.Repositories
                 new Claim(ClaimTypes.NameIdentifier, model.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             };
+            
+            Role role = await _rolerRepository.GetById(user.RoleId);
 
-            var userRole = await _userManager.GetRolesAsync(user);
-            foreach(var role in userRole)
-            {
-                authClaims.Add(new Claim(ClaimTypes.Role, role.ToString()));
-            }
+                authClaims.Add(new Claim(ClaimTypes.Role, role.Name));
+
+            authClaims.Add(new Claim("UserId", user.Id));
 
             var permissions = await _permissionReporitory.GetByRoleId(user.RoleId);
             foreach (var permission in permissions)
@@ -89,12 +90,12 @@ namespace WarrantyManagement.Repositories
             
             if (result.Succeeded)
             {
-                if (!await _roleManager.RoleExistsAsync(Authorization.Role.CUSTOMER))
+                if (!await _roleManager.RoleExistsAsync("Customer"))
                 {
-                    await _roleManager.CreateAsync(new IdentityRole(Authorization.Role.CUSTOMER));
+                    await _roleManager.CreateAsync(new IdentityRole("Customer"));
                 }
 
-                await _userManager.AddToRoleAsync(user, Authorization.Role.CUSTOMER);
+                await _userManager.AddToRoleAsync(user, "Customer");
             }            
             return result;
         }

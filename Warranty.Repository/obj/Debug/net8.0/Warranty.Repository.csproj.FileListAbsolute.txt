@@ -10,3 +10,4 @@ C:\Users\Lc_Tn\Desktop\ALL\Intern\WarrantyManagement\Warranty.Repository\obj\Deb
 C:\Users\Lc_Tn\Desktop\ALL\Intern\WarrantyManagement\Warranty.Repository\obj\Debug\net8.0\refint\Warranty.Repository.dll
 C:\Users\Lc_Tn\Desktop\ALL\Intern\WarrantyManagement\Warranty.Repository\obj\Debug\net8.0\Warranty.Repository.pdb
 C:\Users\Lc_Tn\Desktop\ALL\Intern\WarrantyManagement\Warranty.Repository\obj\Debug\net8.0\ref\Warranty.Repository.dll
+C:\Users\Lc_Tn\Desktop\ALL\Intern\WarrantyManagement\Warranty.Repository\obj\Debug\net8.0\Warranty.Repository.csproj.AssemblyReference.cache

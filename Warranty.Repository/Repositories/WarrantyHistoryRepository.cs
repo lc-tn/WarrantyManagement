@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WarrantyManagement.Entities;
+using WarrantyRepository.IRepositories;
 
 namespace WarrantyManagement.Repositories
 {
-    public class WarrantyHistoryRepository
+    public class WarrantyHistoryRepository : IWarrantyHistoryRepository
     {
         private readonly WarrantyManagementDbContext _context;
 

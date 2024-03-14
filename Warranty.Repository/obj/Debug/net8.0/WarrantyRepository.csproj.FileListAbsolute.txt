@@ -1,0 +1,13 @@
+C:\Users\Lc_Tn\Desktop\ALL\Intern\WarrantyManagement\Warranty.Repository\bin\Debug\net8.0\WarrantyRepository.deps.json
+C:\Users\Lc_Tn\Desktop\ALL\Intern\WarrantyManagement\Warranty.Repository\bin\Debug\net8.0\WarrantyRepository.dll
+C:\Users\Lc_Tn\Desktop\ALL\Intern\WarrantyManagement\Warranty.Repository\bin\Debug\net8.0\WarrantyRepository.pdb
+C:\Users\Lc_Tn\Desktop\ALL\Intern\WarrantyManagement\Warranty.Repository\obj\Debug\net8.0\WarrantyRepository.csproj.AssemblyReference.cache
+C:\Users\Lc_Tn\Desktop\ALL\Intern\WarrantyManagement\Warranty.Repository\obj\Debug\net8.0\WarrantyRepository.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Lc_Tn\Desktop\ALL\Intern\WarrantyManagement\Warranty.Repository\obj\Debug\net8.0\WarrantyRepository.AssemblyInfoInputs.cache
+C:\Users\Lc_Tn\Desktop\ALL\Intern\WarrantyManagement\Warranty.Repository\obj\Debug\net8.0\WarrantyRepository.AssemblyInfo.cs
+C:\Users\Lc_Tn\Desktop\ALL\Intern\WarrantyManagement\Warranty.Repository\obj\Debug\net8.0\WarrantyRepository.csproj.CoreCompileInputs.cache
+C:\Users\Lc_Tn\Desktop\ALL\Intern\WarrantyManagement\Warranty.Repository\obj\Debug\net8.0\WarrantyRepository.sourcelink.json
+C:\Users\Lc_Tn\Desktop\ALL\Intern\WarrantyManagement\Warranty.Repository\obj\Debug\net8.0\WarrantyRepository.dll
+C:\Users\Lc_Tn\Desktop\ALL\Intern\WarrantyManagement\Warranty.Repository\obj\Debug\net8.0\refint\WarrantyRepository.dll
+C:\Users\Lc_Tn\Desktop\ALL\Intern\WarrantyManagement\Warranty.Repository\obj\Debug\net8.0\WarrantyRepository.pdb
+C:\Users\Lc_Tn\Desktop\ALL\Intern\WarrantyManagement\Warranty.Repository\obj\Debug\net8.0\ref\WarrantyRepository.dll

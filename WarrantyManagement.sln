@@ -12,7 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Warranty.Service", "Warranty.IService\Warranty.Service.csproj", "{5F5A369F-ECAF-4F80-8529-EA1C7400C152}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Warranty.Repository", "Warranty.Repository\Warranty.Repository.csproj", "{72F705ED-BF55-49C3-9E64-0480A1CC57C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WarrantyRepository", "Warranty.Repository\WarrantyRepository.csproj", "{72F705ED-BF55-49C3-9E64-0480A1CC57C5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

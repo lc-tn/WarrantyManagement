@@ -1,11 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Drawing.Printing;
-using WarrantyManagement.Authorization;
+using WarrantyRepository.IRepositories;
 using WarrantyManagement.Entities;
 
 namespace WarrantyManagement.Repositories
 {
-    public class WarrantyRepository
+    public class WarrantyRepository : IWarrantyRepository
     {
         private readonly WarrantyManagementDbContext _context;
 
@@ -14,21 +13,21 @@ namespace WarrantyManagement.Repositories
             _context = context;
         }
 
-        public bool CheckExistence(int id)
-        {
-            return _context.Warranties.Any(c => c.Id == id);
-        }
-
         public bool Save()
         {
             var saved = _context.SaveChanges();
             return saved > 0 ? true : false;
         }
 
-        public async Task<List<Warranty>> GetAll(int pageNumber)
+        public async Task<List<Warranty>> GetAllPagination(int pageNumber)
         {
             return await _context.Warranties.OrderByDescending(w => w.CreateDate)
                 .Skip(pageNumber).Take(3).ToListAsync();
+        }
+
+        public async Task<List<Warranty>> GetAll()
+        {
+            return await _context.Warranties.OrderByDescending(w => w.CreateDate).ToListAsync();
         }
 
         public Task<int> Total()
@@ -39,6 +38,18 @@ namespace WarrantyManagement.Repositories
         public async Task<Warranty> GetWarrantyById(int id)
         {
             return await _context.Warranties.SingleOrDefaultAsync(w => w.Id == id);
+        }
+
+        public async Task<List<Warranty>> GetByStatus(string status)
+        {
+            return await _context.Warranties.OrderByDescending(w => w.CreateDate)
+                .Where(w => w.Status.Equals(status)).ToListAsync();
+        }
+
+        public async Task<List<Warranty>> GetByCustomer(string customerId)
+        {
+            return await _context.Warranties.OrderByDescending(w => w.CreateDate)
+                .Where(w => w.CustomerId.Equals(customerId)).ToListAsync();
         }
 
         public bool CreateWarranty(Warranty warranty)

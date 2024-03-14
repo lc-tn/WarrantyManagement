@@ -1,12 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using WarrantyManagement.Authorization;
 using WarrantyManagement.Entities;
-using WarrantyManagement.Model;
-
+using WarrantyRepository.IRepositories;
 namespace WarrantyManagement.Repositories
 {
-    public class RolePermissionRepository
+    public class RolePermissionRepository : IRolePermissionRepository
     {
         private readonly WarrantyManagementDbContext _context;
 

@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WarrantyManagement.Authorization;
 using WarrantyManagement.Entities;
-using WarrantyManagement.Migrations;
 using WarrantyManagement.Model;
-using WarrantyManagement.Repositories;
+using WarrantyRepository.IRepositories;
 
 namespace WarrantyManagement.Controllers
 {
@@ -11,9 +10,9 @@ namespace WarrantyManagement.Controllers
     [ApiController]
     public class WarrantyDeviceHistoryController
     {
-        private readonly WarrantyDeviceHistoryRepository _warrantyDeviceHistoryRepository;
+        private readonly IWarrantyDeviceHistoryRepository _warrantyDeviceHistoryRepository;
 
-        public WarrantyDeviceHistoryController(WarrantyDeviceHistoryRepository warrantyDeviceHistoryRepository)
+        public WarrantyDeviceHistoryController(IWarrantyDeviceHistoryRepository warrantyDeviceHistoryRepository)
         {
             _warrantyDeviceHistoryRepository = warrantyDeviceHistoryRepository;
         }
