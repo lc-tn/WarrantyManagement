@@ -7,10 +7,11 @@ namespace WarrantyRepository.IRepositories
     {
         bool Save();
         Task<List<Device>> GetAll();
-        Task<Device> GetDeviceById(int id);
+        Task<Device> GetDeviceById(int? id);
         Task<Device?> GetDeviceByName(string name);
         Task<List<Device>> GetDeviceByUser(string userId);
         Task<bool> Create(Device device);
         bool EditDevices(List<Device> devices);
+        Task<List<Device>> GetReplacementDevice(int categoryId);
     }
 }

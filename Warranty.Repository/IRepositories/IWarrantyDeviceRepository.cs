@@ -13,5 +13,6 @@ namespace WarrantyRepository.IRepositories
         bool Add(WarrantyDevice warrantyDevice);
         List<WarrantyDevice> GetDeviceByWarrantyId(int warrantyId);
         bool Edit(WarrantyDevice warrantyDevice);
+        WarrantyDevice GetWarrantyDevice(int warrantyId, int deviceId);
     }
 }

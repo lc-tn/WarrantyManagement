@@ -30,11 +30,11 @@ namespace WarrantyManagement.Repositories
             return false;
         }
 
-        public async Task<List<WarrantyHistory>> GetByWarranty(int warrantyId, int pageNumber)
+        public async Task<List<WarrantyHistory>> GetByWarranty(int warrantyId, int pageNumber, int pageSize)
         {
             return await _context.WarrantyHistories.Where(w => w.WarrantyId==warrantyId)
                 .OrderByDescending(w => w.ModifyDate)
-                .Skip(pageNumber).Take(3).ToListAsync();
+                .Skip(pageNumber).Take(pageSize).ToListAsync();
         }
 
         public Task<int> Total(int warrantyId)

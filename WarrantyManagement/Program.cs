@@ -8,6 +8,7 @@ using System.Text;
 using WarrantyRepository.IRepositories;
 using WarrantyManagement.Entities;
 using WarrantyManagement.Repositories;
+using WarrantyRepository.Repositories;
 
 namespace WarrantyManagement
 {
@@ -52,7 +53,9 @@ namespace WarrantyManagement
             // Singleton - Scoped - Trans
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
+            builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<IDeviceRepository, DeviceRepository>();
+            builder.Services.AddScoped<IDeviceHistoryRepository, DeviceHistoryRepository>();
             builder.Services.AddScoped<IWarrantyRepository, Repositories.WarrantyRepository>();
             builder.Services.AddScoped<IWarrantyHistoryRepository, WarrantyHistoryRepository>();
             builder.Services.AddScoped<IWarrantyDeviceRepository, WarrantyDeviceRepository>();
@@ -64,7 +67,9 @@ namespace WarrantyManagement
 
             builder.Services.AddDbContext<WarrantyManagementDbContext>(options =>
             {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+                    b => b.MigrationsAssembly("WarrantyManagement"));
+                //options.UseSqlServer(b => b.MigrationsAssembly("WarrantyManagement"));
             });
 
             builder.Services.AddCors(options => options.AddDefaultPolicy(

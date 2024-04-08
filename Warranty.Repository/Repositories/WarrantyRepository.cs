@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WarrantyRepository.IRepositories;
 using WarrantyManagement.Entities;
+using System.Collections.Generic;
+using Microsoft.IdentityModel.Tokens;
 
 namespace WarrantyManagement.Repositories
 {
@@ -19,10 +21,10 @@ namespace WarrantyManagement.Repositories
             return saved > 0 ? true : false;
         }
 
-        public async Task<List<Warranty>> GetAllPagination(int pageNumber)
+        public async Task<List<Warranty>> GetAllPagination(int pageNumber, int pageSize)
         {
             return await _context.Warranties.OrderByDescending(w => w.CreateDate)
-                .Skip(pageNumber).Take(3).ToListAsync();
+                .Skip(pageNumber).Take(pageSize).ToListAsync();
         }
 
         public async Task<List<Warranty>> GetAll()
@@ -33,6 +35,22 @@ namespace WarrantyManagement.Repositories
         public Task<int> Total()
         {
             return _context.Warranties.CountAsync();
+        }
+
+        public Task<int> TotalByUser(string userId)
+        {
+            return _context.Warranties.Where(w => w.CustomerId.Equals(userId) || w.Sale.Equals(userId) ||
+                        w.Technician.Equals(userId)).CountAsync();
+        }
+
+        public Task<int> TotalNewWarrantySale()
+        {
+            return _context.Warranties.Where(w => w.Sale.Equals("")).CountAsync();
+        }
+
+        public Task<int> TotalNewWarrantyTech()
+        {
+            return _context.Warranties.Where(w => w.Technician.Equals("") && w.AppointmentDate != null).CountAsync();
         }
 
         public async Task<Warranty> GetWarrantyById(int id)
@@ -46,10 +64,34 @@ namespace WarrantyManagement.Repositories
                 .Where(w => w.Status.Equals(status)).ToListAsync();
         }
 
-        public async Task<List<Warranty>> GetByCustomer(string customerId)
+        public async Task<List<Warranty>> GetByUser(string userId)
         {
-            return await _context.Warranties.OrderByDescending(w => w.CreateDate)
-                .Where(w => w.CustomerId.Equals(customerId)).ToListAsync();
+            List <Warranty> warranties =  await _context.Warranties.OrderByDescending(w => w.CreateDate)
+                .Where(w => w.CustomerId.Equals(userId)).ToListAsync();
+            return warranties;
+        }
+
+        public async Task<List<Warranty>> GetByUserPagination(string userId, int pageNumber, int pageSize)
+        {
+            List<Warranty> warranties = await _context.Warranties.OrderByDescending(w => w.CreateDate)
+                .Where(w => w.CustomerId.Equals(userId) || w.Sale.Equals(userId) ||
+                        w.Technician.Equals(userId)).Skip(pageNumber).Take(pageSize).ToListAsync();
+            return warranties;
+        }
+
+        public async Task<List<Warranty>> GetNewWarrantySale(int pageNumber, int pageSize)
+        {
+            List<Warranty> warranties = await _context.Warranties.OrderByDescending(w => w.CreateDate)
+                .Where(w => w.Sale == null).Skip(pageNumber).Take(pageSize).ToListAsync();
+            return warranties;
+        }
+
+        public async Task<List<Warranty>> GetNewWarrantyTech(int pageNumber, int pageSize)
+        {
+            List<Warranty> warranties = await _context.Warranties.OrderByDescending(w => w.CreateDate)
+                .Where(w =>  w.Technician == null && w.AppointmentDate != null)
+                .Skip(pageNumber).Take(pageSize).ToListAsync();
+            return warranties;
         }
 
         public bool CreateWarranty(Warranty warranty)

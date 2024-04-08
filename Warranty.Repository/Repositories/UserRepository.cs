@@ -116,7 +116,7 @@ namespace WarrantyManagement.Repositories
             return await _context.Customers.ToListAsync();
         }
 
-        public async Task<User> GetUserByname (string name)
+        public async Task<User> GetUserByUsername (string name)
         {
             return await _context.Customers.SingleAsync(c => c.UserName.Equals(name));
         }

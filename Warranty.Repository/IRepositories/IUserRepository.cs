@@ -11,7 +11,7 @@ namespace WarrantyRepository.IRepositories
         public bool CheckExistence(string id);
         bool Save();
         Task<List<User>> GetAll();
-        Task<User> GetUserByname(string name);
+        Task<User> GetUserByUsername(string name);
         Task<User> GetUserById(string id);
         Task<List<User>> GetUserByRole(int roleId);
         bool CreateUser(User user);

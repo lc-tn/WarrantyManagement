@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WarrantyManagement.Authorization;
 using WarrantyManagement.Entities;
+using WarrantyManagement.Migrations;
 using WarrantyManagement.Model;
-using WarrantyManagement.Repositories;
 using WarrantyRepository.IRepositories;
 
 namespace WarrantyManagement.Controllers
@@ -12,25 +12,32 @@ namespace WarrantyManagement.Controllers
     public class WarrantyDeviceController
     {
         private readonly IWarrantyDeviceRepository _warrantyDeviceRepository;
+        private readonly IDeviceRepository _deviceRepository;
+        private readonly IWarrantyRepository _warrantyRepository;
 
-        public WarrantyDeviceController(IWarrantyDeviceRepository warrantyDeviceRepository)
+        public WarrantyDeviceController(IWarrantyDeviceRepository warrantyDeviceRepository, 
+                IDeviceRepository deviceRepository, IWarrantyRepository warrantyRepository)
         {
             _warrantyDeviceRepository = warrantyDeviceRepository;
+            _deviceRepository = deviceRepository;
+            _warrantyRepository = warrantyRepository;
         }
 
         [HttpPost]
         [HasPermission("CREATE_WARRANTY")]
-        public bool AddWarrantyDevice(EditWarrantyDeviceModel editWarrantyDeviceModel)
+        public async Task<bool> AddWarrantyDevice(EditWarrantyDeviceModel editWarrantyDeviceModel)
         {
+            Warranty warranty = await _warrantyRepository.GetWarrantyById(editWarrantyDeviceModel.WarrantyId);
+            Device device = await _deviceRepository.GetDeviceById(editWarrantyDeviceModel.DeviceId);
             WarrantyDevice warrantyDevice = new WarrantyDevice
             {
-                WarrantyId = editWarrantyDeviceModel.WarrantyId,
-                DeviceId = editWarrantyDeviceModel.DeviceId,
+                WarrantyId = warranty.Id,
+                DeviceId = device.Id,
                 Status = editWarrantyDeviceModel.Status,
                 Result = editWarrantyDeviceModel.Result,
                 Description = editWarrantyDeviceModel.Description,
                 Modifier = editWarrantyDeviceModel.Modifier,
-                ModifyDate = DateTime.UtcNow
+                ModifyDate = DateTime.Now
             };
             if (!_warrantyDeviceRepository.Edit(warrantyDevice))
                 return true;
@@ -38,20 +45,46 @@ namespace WarrantyManagement.Controllers
         }
 
         [HttpPut]
-        public bool EditWarrantyDevice(EditWarrantyDeviceModel editWarrantyDeviceModel)
+        public async Task<bool> EditWarrantyDevice(EditWarrantyDeviceModel editWarrantyDeviceModel)
         {
-            WarrantyDevice warrantyDevice = new WarrantyDevice
+            WarrantyDevice warrantyDevice = _warrantyDeviceRepository.GetWarrantyDevice(editWarrantyDeviceModel.WarrantyId,
+                                                                            editWarrantyDeviceModel.DeviceId);
+            if (editWarrantyDeviceModel.ReplacementDevice != null)
             {
-                WarrantyId = editWarrantyDeviceModel.WarrantyId,
-                DeviceId = editWarrantyDeviceModel.DeviceId,
-                Status = editWarrantyDeviceModel.Status,
-                Result = editWarrantyDeviceModel.Result,
-                Description = editWarrantyDeviceModel.Description,
-                Modifier = editWarrantyDeviceModel.Modifier,
-                ModifyDate = DateTime.UtcNow
-            };   
-            if (!_warrantyDeviceRepository.Edit(warrantyDevice))
-                return true;
+                Device replacementDevice = await _deviceRepository.GetDeviceById(editWarrantyDeviceModel.ReplacementDevice);
+                warrantyDevice.ReplacementDevice = replacementDevice.Id;
+            }
+            if (warrantyDevice != null)
+            {
+                //warrantyDevice.WarrantyId = editWarrantyDeviceModel.WarrantyId;
+                //warrantyDevice.DeviceId = editWarrantyDeviceModel.DeviceId;
+                warrantyDevice.Status = editWarrantyDeviceModel.Status;
+                warrantyDevice.Result = editWarrantyDeviceModel.Result;
+                warrantyDevice.Description = editWarrantyDeviceModel.Description;
+                warrantyDevice.Modifier = editWarrantyDeviceModel.Modifier;
+                warrantyDevice.ModifyDate = DateTime.Now;
+                warrantyDevice.Reason = editWarrantyDeviceModel.Reason;
+                
+                if (!_warrantyDeviceRepository.Edit(warrantyDevice))
+                    return true;
+            }
+            return false;
+        }
+
+        [HttpPut("replacement-device/{warrantyId}/{deviceId}")]
+        public async Task<bool> AddReplacementDevice(ReplacementDeviceModel replacementDeviceModel, int warrantyId, int deviceId)
+        {
+            Device device = await _deviceRepository.GetDeviceById(replacementDeviceModel.ReplacementDevice);
+            WarrantyDevice warrantyDevice = _warrantyDeviceRepository.GetWarrantyDevice(warrantyId, deviceId);
+            if (warrantyDevice != null)
+            {
+                warrantyDevice.Modifier = replacementDeviceModel.Modifier;
+                warrantyDevice.ModifyDate = DateTime.Now;
+                warrantyDevice.ReplacementDevice = device.Id;
+
+                if (!_warrantyDeviceRepository.Edit(warrantyDevice))
+                    return true;
+            }
             return false;
         }
     }

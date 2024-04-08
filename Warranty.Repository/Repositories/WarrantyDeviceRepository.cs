@@ -35,10 +35,15 @@ namespace WarrantyManagement.Repositories
             return _context.WarrantyDevices.Where(wd => wd.WarrantyId == warrantyId).ToList();
         }
 
+        public WarrantyDevice GetWarrantyDevice(int warrantyId, int deviceId)
+        {
+            return _context.WarrantyDevices.Single(wd => wd.WarrantyId == warrantyId && wd.DeviceId == deviceId);
+        }
+
         public bool Edit(WarrantyDevice warrantyDevice)
         {
-            var entry = _context.WarrantyDevices.Update(warrantyDevice);
-                Save();
+            _context.WarrantyDevices.Update(warrantyDevice);
+            Save();
             return true;
         }
     }

@@ -11,7 +11,8 @@ namespace WarrantyRepository.IRepositories
     {
         bool Save();
         bool Add(WarrantyDeviceHistory warrantyDeviceHistory);
-        List<WarrantyDeviceHistory> GetDeviceByWarrantyId(int warrantyId, int pageNumber);
+        List<WarrantyDeviceHistory> GetDeviceByWarrantyId(int warrantyId, int pageNumber, int pageSize);
         Task<int> Total(int warrantyId);
+        WarrantyDeviceHistory GetWarrantyDeviceHistory(int warrantyId, int deviceId);
     }
 }

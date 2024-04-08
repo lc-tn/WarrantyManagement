@@ -6,7 +6,7 @@ namespace WarrantyRepository.IRepositories
     {
         bool Save();
         bool Add(WarrantyHistory warrantyHistory);
-        Task<List<WarrantyHistory>> GetByWarranty(int warrantyId, int pageNumber);
+        Task<List<WarrantyHistory>> GetByWarranty(int warrantyId, int pageNumber, int pageSize);
         Task<int> Total(int warrantyId);
     }
 }

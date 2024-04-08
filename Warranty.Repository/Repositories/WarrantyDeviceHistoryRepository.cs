@@ -30,10 +30,18 @@ namespace WarrantyManagement.Repositories
             return false;
         }
 
-        public List<WarrantyDeviceHistory> GetDeviceByWarrantyId(int warrantyId, int pageNumber)
+        public List<WarrantyDeviceHistory> GetDeviceByWarrantyId(int warrantyId, int pageNumber, int pageSize)
         {
             return _context.WarrantyDeviceHistories.Where(wd => wd.WarrantyId == warrantyId).OrderByDescending(w => w.ModifyDate)
-                .Skip(pageNumber).Take(3).ToList();
+                .Skip(pageNumber).Take(pageSize).ToList();
+        }
+
+        public WarrantyDeviceHistory GetWarrantyDeviceHistory(int warrantyId, int deviceId)
+        {
+            var r = _context.WarrantyDeviceHistories.Where(wd => wd.WarrantyId == warrantyId &&
+                               wd.DeviceId == deviceId).OrderByDescending(w => w.ModifyDate);
+            return _context.WarrantyDeviceHistories.Where(wd => wd.WarrantyId == warrantyId && 
+                               wd.DeviceId == deviceId).OrderByDescending(w => w.ModifyDate).FirstOrDefault();
         }
 
         public Task<int> Total(int warrantyId)

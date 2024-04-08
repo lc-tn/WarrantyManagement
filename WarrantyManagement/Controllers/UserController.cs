@@ -2,7 +2,6 @@
 using WarrantyManagement.Authorization;
 using WarrantyManagement.Entities;
 using WarrantyManagement.Model;
-using WarrantyManagement.Repositories;
 using WarrantyRepository.IRepositories;
 using Role = WarrantyManagement.Entities.Role;
 
@@ -109,7 +108,7 @@ namespace WarrantyManagement.Controllers
 
             if (CheckExistence(user.UserName))
             {
-                ModelState.AddModelError("", "This id alredy exists!");
+                ModelState.AddModelError("", "This id already exists!");
                 return StatusCode(422, ModelState);
             }
 

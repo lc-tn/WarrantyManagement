@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using WarrantyManagement.Entities;
 using WarrantyRepository.IRepositories;
 
@@ -24,7 +25,7 @@ namespace WarrantyManagement.Repositories
             return await _context.Devices.ToListAsync();
         }
 
-        public async Task<Device> GetDeviceById(int id)
+        public async Task<Device> GetDeviceById(int? id)
         {
             return await _context.Devices.SingleOrDefaultAsync(c => c.Id == id);
         }
@@ -36,7 +37,14 @@ namespace WarrantyManagement.Repositories
 
         public async Task<List<Device>> GetDeviceByUser(string userId)
         {
-            return await _context.Devices.Where(c => c.UserId.Equals(userId)).ToListAsync();
+            return await _context.Devices.Where(c => c.UserId.Equals(userId) && c.Status.Equals("Đang sử dụng"))
+                .ToListAsync();
+        }
+
+        public async Task<List<Device>> GetReplacementDevice(int categoryId)
+        {
+            return await _context.Devices.Where(c => c.UserId.Equals(""))
+                .Where(c => c.CategoryId == categoryId).ToListAsync();
         }
 
         public async Task<bool> Create(Device device)
@@ -52,10 +60,9 @@ namespace WarrantyManagement.Repositories
                 return false;
             }
         }
-
         public bool EditDevices (List<Device> devices)
         {
-             _context.UpdateRange(devices);
+            _context.Devices.UpdateRange(devices);
             return true;
         }
     }
