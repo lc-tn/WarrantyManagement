@@ -90,9 +90,9 @@ namespace WarrantyManagement.Controllers
 
         [HttpGet("replacement-device/{categoryId}")]
         [HasPermission("VIEW_DEVICE")]
-        public async Task<List<Device>> GetReplacementDevice(int categoryId)
+        public List<Device> GetReplacementDevice(int categoryId)
         {
-            List<Device> devices = await _deviceRepository.GetReplacementDevice(categoryId);
+            List<Device> devices = _deviceRepository.GetReplacementDevice(categoryId);
             return devices;
         }
 

@@ -12,6 +12,6 @@ namespace WarrantyRepository.IRepositories
         Task<List<Device>> GetDeviceByUser(string userId);
         Task<bool> Create(Device device);
         bool EditDevices(List<Device> devices);
-        Task<List<Device>> GetReplacementDevice(int categoryId);
+        List<Device> GetReplacementDevice(int categoryId);
     }
 }

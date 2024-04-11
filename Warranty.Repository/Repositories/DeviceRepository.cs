@@ -41,10 +41,10 @@ namespace WarrantyManagement.Repositories
                 .ToListAsync();
         }
 
-        public async Task<List<Device>> GetReplacementDevice(int categoryId)
+        public List<Device> GetReplacementDevice(int categoryId)
         {
-            return await _context.Devices.Where(c => c.UserId.Equals(""))
-                .Where(c => c.CategoryId == categoryId).ToListAsync();
+            return _context.Devices.Where(c => c.UserId.Equals(""))
+                .Where(c => c.CategoryId == categoryId).ToList();
         }
 
         public async Task<bool> Create(Device device)

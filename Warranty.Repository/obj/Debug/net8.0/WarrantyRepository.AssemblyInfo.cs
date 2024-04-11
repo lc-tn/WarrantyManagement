@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WarrantyRepository")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+36dd7163232066084c6f371a055c83feb41482a7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3899c562407265e870dc857787a3455236dadf90")]
 [assembly: System.Reflection.AssemblyProductAttribute("WarrantyRepository")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WarrantyRepository")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
